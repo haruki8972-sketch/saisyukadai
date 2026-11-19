@@ -49,6 +49,7 @@ def create_state(field_width, field_height, rng):
         "elapsed_time": 0.0,   # 一時停止中は増えない
         "scroll_count": 0,    # コースが進んだ行数
         "score": 0,           # w11演習01で更新する
+        "combo": 0,           # 連続でコインを取った回数
         "level": 1,           # 100行進むごとに上昇
         "scroll_progress": 0.0,
         "field_width": field_width,
@@ -89,7 +90,14 @@ def create_course_row(state, rng, with_tree=True):
     if with_tree and rng.random() < 0.12:
         coin = rng.randint(left + 3, right - 3)
     if coin == tree:
-        coin = None
+       coin = None
+    #テスト用
+#    coin = None
+#    if with_tree:
+#        # 画面中央と、その1つ右を交互に出す
+#        coin = (width // 2) + (state["scroll_count"] % 2)
+#        if coin == tree:
+#            tree = None
     return {"left": left, "right": right, "tree": tree, "coin": coin}
 
 
@@ -125,8 +133,11 @@ def check_collision(state):
         state["game_over_reason"] = "TREE!"
         state["status"] = STATUS_GAME_OVER
     elif row["coin"] == player_x:
-        state["score"] += 100
+        state["combo"] += 1
+        state["score"] += 100 * state["combo"]
         row["coin"] = None# コインを取得した場合、その位置をNoneに設定
+    else:
+        state["combo"] = 0
 
 
 def update_game(state, dt, rng):
