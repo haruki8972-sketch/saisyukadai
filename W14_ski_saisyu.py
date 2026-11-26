@@ -50,6 +50,7 @@ def create_state(field_width, field_height, rng):
         "scroll_count": 0,    # コースが進んだ行数
         "score": 0,           # w11演習01で更新する
         "combo": 0,           # 連続でコインを取った回数
+        "rows_since_coin": 10,
         "level": 1,           # 100行進むごとに上昇
         "scroll_progress": 0.0,
         "field_width": field_width,
@@ -87,8 +88,14 @@ def create_course_row(state, rng, with_tree=True):
         tree = rng.randint(left + 3, right - 3)#木の位置をコース内にランダムに設定
     #コインの生成パターンを計算している
     coin = None
-    if with_tree and rng.random() < 0.12:
-        coin = rng.randint(left + 3, right - 3)
+    min_coin_interval = 15
+    if with_tree and state["rows_since_coin"] >= min_coin_interval and rng.random() < 0.12:
+        candidate = rng.randint(left + 3, right - 3)
+        if candidate != tree:
+            coin = candidate
+            state["rows_since_coin"] = 0
+    else:
+        state["rows_since_coin"] += 1
     if coin == tree:
        coin = None
     #テスト用
