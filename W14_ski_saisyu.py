@@ -42,7 +42,7 @@ def create_state(field_width, field_height, rng):
     state = {
         "status": STATUS_READY,
         "x": field_width // 2,
-        "y": max(3, int(field_height * 0.35)),
+        "y": max(3, int(field_height * 0.60)),
         "direction": 1,     # -1: 左、+1: 右。直進（0）は使わない。
         "base_speed": 1.0,      # レベル1のときのスクロール速度
         "speed": 1.0,           # レベルに応じて上昇する
