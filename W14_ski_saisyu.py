@@ -57,6 +57,7 @@ def create_state(field_width, field_height, rng):
         "field_height": field_height,
         "course_center": field_width // 2,
         "course_half_width": half_width,
+        "min_course_half_width": 5,
         "rows": deque(),
         "game_over_reason": "",
     }
@@ -71,9 +72,19 @@ def create_course_row(state, rng, with_tree=True):
     """コースを1行生成する。木や崖の生成は講師提供部分。"""
     width = state["field_width"]#フィールドの幅
     half = state["course_half_width"]#センターを出している
+    base_half = min(19, max(13, (width - 12) // 2))
+    min_half = state.get("min_course_half_width", 5)
+    # レベル10上がるごとに段階的に狭める
+    shrink_steps = max(0, (state["level"] - 1) // 5)
+    shrink_per_5lv = 2  # レベル5ごとに半幅をどれだけ狭めるか
+    target_half = max(min_half, base_half - shrink_steps * shrink_per_5lv)
 
     # 崖の幅とコース中心を急激に変化させず、通れる幅を確保する。
     if rng.random() < 0.13:#コースの幅を変化させる確率
+        if half > target_half:
+            half -= 1
+        elif half < target_half:
+            half += 1
         half = int(clamp(half + rng.choice([-1, 1]), 13, 21))#コースの幅を調整
     center = state["course_center"] + rng.choice([-1, 0, 0, 0, 0, 1])#コースの中心を調整
     center = int(clamp(center, half + 3, width - half - 4))#コースの中心をフィールド内に制限
