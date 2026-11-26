@@ -134,7 +134,7 @@ def move_course_one_row(state, rng):
     # 直進はできない。1行進むごとに必ず左右どちらかへ1文字移動する。
     state["x"] += state["direction"]
     state["scroll_count"] += 1
-    state["level"] = state["scroll_count"] // 100 + 1
+    state["level"] = state["scroll_count"] // 60 + 1
 
     # 演習対象の関数は「1行進むたび」に呼ばれる。
     update_distance_score(state)
