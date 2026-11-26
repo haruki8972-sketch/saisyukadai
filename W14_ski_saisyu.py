@@ -154,7 +154,7 @@ def check_collision(state):
         state["combo"] += 1
         state["score"] += 100 * state["combo"]
         row["coin"] = None# コインを取得した場合、その位置をNoneに設定
-    else:
+    elif row["coin"] is not None:
         state["combo"] = 0
 
 
